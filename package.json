@@ -1,0 +1,17 @@
+{
+  "name": "b6a2-express-jwt",
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "dev": "npx tsx watch src/server.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5",
+    "@types/pg": "^8",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "pg": "^8.16.3"
+  }
+}
