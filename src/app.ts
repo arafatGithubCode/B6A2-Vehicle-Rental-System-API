@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { initDB } from "./config/db";
 import { authRoutes } from "./modules/auth/auth-routes";
+import { vehicleRouter } from "./modules/vehicle/vehicle-routes";
 import errorHandler from "./utils/error-handler";
 import sendJSON from "./utils/send-json";
 
@@ -12,6 +13,8 @@ initDB();
 
 // referred the auth routes
 app.use("/api/v1/auth", authRoutes);
+// referred the vehicle routes
+app.use("/api/v1/vehicles", vehicleRouter);
 
 // health check
 app.get("/api/v1/health", (_req, res) => {

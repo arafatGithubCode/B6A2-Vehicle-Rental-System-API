@@ -22,7 +22,7 @@ const initDB = async () => {
         id UUID PRIMARY KEY,
         vehicle_name VARCHAR(300) NOT NULL,
         type VARCHAR(30) NOT NULL,
-        registration_number SERIAL UNIQUE NOT NULL,
+        registration_number TEXT UNIQUE NOT NULL,
         daily_rent_price NUMERIC(10, 2) NOT NULL,
         availability_status VARCHAR(50) NOT NULL
         )`);
