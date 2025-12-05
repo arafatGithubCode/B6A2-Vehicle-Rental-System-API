@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { initDB } from "./config/db";
+import { authRoutes } from "./modules/auth/auth-routes";
 import errorHandler from "./utils/error-handler";
 import sendJSON from "./utils/send-json";
 
@@ -8,6 +9,9 @@ const app = express();
 app.use(express.json());
 // initialize database
 initDB();
+
+// referred the auth routes
+app.use("/api/v1/auth", authRoutes);
 
 // health check
 app.get("/api/v1/health", (_req, res) => {
