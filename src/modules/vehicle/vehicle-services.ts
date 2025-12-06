@@ -61,8 +61,6 @@ const getSingleVehicleById = async (vehicleId: string) => {
   return result;
 };
 
-// vehicle details, daily rent price or availability status
-
 const updateSingleVehicleById = async (
   payload: Record<string, unknown>,
   vehicleId: string
@@ -94,9 +92,40 @@ const updateSingleVehicleById = async (
   return result;
 };
 
+const deleteVehicleById = async (vehicleId: string) => {
+  const vehicleResult = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [
+    vehicleId,
+  ]);
+
+  if (vehicleResult.rows.length === 0) {
+    throw new Error("This vehicle does not exists.");
+  }
+
+  const bookingResult = await pool.query(
+    `SELECT * FROM bookings WHERE vehicle_id=$1`,
+    [vehicleId]
+  );
+
+  if (bookingResult.rows.length > 0) {
+    const hasActiveBooking = bookingResult.rows.some(
+      (booking) => booking.status === "active"
+    );
+
+    console.log({ hasActiveBooking });
+
+    if (hasActiveBooking) {
+      throw new Error(
+        "This vehicle cannot be deleted because this vehicle has an active booking"
+      );
+    }
+  }
+
+  await pool.query(`DELETE FROM vehicles WHERE id=$1`, [vehicleId]);
+};
 export const vehicleServices = {
   createVehicle,
   getAllVehicles,
   getSingleVehicleById,
   updateSingleVehicleById,
+  deleteVehicleById,
 };

@@ -16,5 +16,11 @@ router.put(
   auth(["admin"]),
   vehicleControllers.updateSingleVehicleById
 );
+// DELETE:vehicleId-> delete single vehicle by id -> admin only
+router.delete(
+  "/:vehicleId",
+  auth(["admin"]),
+  vehicleControllers.deleteVehicleById
+);
 
 export const vehicleRouter = router;

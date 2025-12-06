@@ -52,9 +52,10 @@ const deleteUserById = async (userId: string) => {
     throw new Error("This user does not exists.");
   }
 
-  const bookingResult = await pool.query(`SELECT * FROM users WHERE id=$1`, [
-    userId,
-  ]);
+  const bookingResult = await pool.query(
+    `SELECT * FROM bookings WHERE customer_id=$1`,
+    [userId]
+  );
 
   if (bookingResult.rows.length > 0) {
     const hasActiveBooking = bookingResult.rows.some(
