@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { initDB } from "./config/db";
 import { authRoutes } from "./modules/auth/auth-routes";
+import { bookingRoutes } from "./modules/booking/booking-routes";
 import { userRoutes } from "./modules/user/user-routes";
 import { vehicleRouter } from "./modules/vehicle/vehicle-routes";
 import errorHandler from "./utils/error-handler";
@@ -18,6 +19,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/vehicles", vehicleRouter);
 // referred the users routes
 app.use("/api/v1/users", userRoutes);
+// referred the bookings routes
+app.use("/api/v1/bookings", bookingRoutes);
 
 // health check
 app.get("/api/v1/health", (_req, res) => {
