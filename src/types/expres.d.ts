@@ -6,4 +6,10 @@ declare global {
       user?: JwtPayload;
     }
   }
+
+  interface Error {
+    statusCode?: number;
+  }
 }
+
+export {};

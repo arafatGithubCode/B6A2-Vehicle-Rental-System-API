@@ -7,5 +7,12 @@ const roleType = {
 const allowedVehicleType = ["car", "bike", "van", "suv"];
 // vehicle available status
 const vehicleAvailableStatus = ["available", "booked"];
+// allowed booking status
+const allowedBookingStatus = ["active", "cancelled", "returned"];
 
-export { allowedVehicleType, roleType, vehicleAvailableStatus };
+export {
+  allowedBookingStatus,
+  allowedVehicleType,
+  roleType,
+  vehicleAvailableStatus,
+};

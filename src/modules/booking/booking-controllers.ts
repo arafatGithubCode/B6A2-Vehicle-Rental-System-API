@@ -22,7 +22,8 @@ const createBookingByVehicleId = async (req: Request, res: Response) => {
       bookingWithVehicle
     );
   } catch (error) {
-    sendJSON(500, false, res, errorHandler(error));
+    const { message, statusCode } = errorHandler(error);
+    sendJSON(statusCode, false, res, message);
   }
 };
 
@@ -45,7 +46,8 @@ const getAllBookingsByRole = async (req: Request, res: Response) => {
       sendJSON(200, true, res, "Bookings retrieved successfully", result.rows);
     }
   } catch (error) {
-    sendJSON(500, false, res, errorHandler(error));
+    const { message, statusCode } = errorHandler(error);
+    sendJSON(statusCode, false, res, message);
   }
 };
 
@@ -80,7 +82,8 @@ const updateBookingStatus = async (req: Request, res: Response) => {
       }
     }
   } catch (error) {
-    sendJSON(500, false, res, errorHandler(error));
+    const { message, statusCode } = errorHandler(error);
+    sendJSON(statusCode, false, res, message);
   }
 };
 

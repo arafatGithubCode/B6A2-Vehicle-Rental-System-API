@@ -1,5 +1,5 @@
 import { pool } from "../../config/db";
-import { roleType } from "../../types";
+import { allowedBookingStatus, roleType } from "../../types";
 import getNumberOfDays from "../../utils/get-number-of-days";
 
 const createBookingByVehicleId = async (payload: Record<string, unknown>) => {
@@ -11,12 +11,18 @@ const createBookingByVehicleId = async (payload: Record<string, unknown>) => {
   ]);
 
   if (vehicleResult.rows.length === 0) {
-    throw new Error("This vehicle does not exists.");
+    const error = new Error("This vehicle does not exists.");
+    error.statusCode = 404;
+    throw error;
   }
 
   // check status -> can't be booked if already booked
   if (vehicleResult.rows[0].availability_status === "booked") {
-    throw new Error("This vehicle is already booked. Please try another.");
+    const error = new Error(
+      "This vehicle is already booked. Please try another."
+    );
+    error.statusCode = 400;
+    throw error;
   }
 
   // check future date is selected
@@ -24,7 +30,9 @@ const createBookingByVehicleId = async (payload: Record<string, unknown>) => {
     new Date(rent_end_date as string).getTime() <
     new Date(rent_start_date as string).getTime()
   ) {
-    throw new Error("Please select upcoming date");
+    const error = new Error("Please select upcoming date");
+    error.statusCode = 400;
+    throw error;
   }
 
   // price calculation
@@ -76,7 +84,9 @@ const getAllBookingsByRole = async (role: string, customer_id?: string) => {
     const result = await pool.query(`SELECT * FROM bookings`);
     return result;
   } else {
-    throw new Error("Please select valid role.");
+    const error = new Error("Please select valid role.");
+    error.statusCode = 400;
+    throw error;
   }
 };
 
@@ -85,13 +95,21 @@ const updateBookingStatus = async (
   role: string,
   status: string
 ) => {
+  // check valid status
+  if (!allowedBookingStatus.includes(status)) {
+    const error = new Error("Invalid booking status is selected.");
+    error.statusCode = 400;
+    throw error;
+  }
   // get booking details by booking id
   const bookingResult = await pool.query(`SELECT * FROM bookings WHERE id=$1`, [
     bookingId,
   ]);
 
   if (bookingResult.rows.length === 0) {
-    throw new Error("This booking does not exists.");
+    const error = new Error("This booking does not exists.");
+    error.statusCode = 404;
+    throw error;
   }
 
   const vehicleId = bookingResult.rows[0].vehicle_id;
@@ -124,28 +142,36 @@ const updateBookingStatus = async (
   } else if (!isBookingDateEnded && role === roleType.customer) {
     // Customer: Cancel booking (before start date only)
     if (bookingResult.rows[0].status === "cancelled") {
-      throw new Error("This booking was already cancelled.");
+      const error = new Error("This booking was already cancelled.");
+      error.statusCode = 400;
+      throw error;
     }
 
     if (bookingResult.rows[0].status !== "active") {
-      throw new Error(
+      const error = new Error(
         "You can only cancel your active booking before starting date."
       );
+      error.statusCode = 400;
+      throw error;
     }
 
     const currentDate = new Date();
     const rent_start_date = new Date(bookingResult.rows[0].rent_start_date);
 
     if (currentDate.getTime() > rent_start_date.getTime()) {
-      throw new Error(
+      const error = new Error(
         "Booking status cannot be changed because this booking is already started."
       );
+      error.statusCode = 400;
+      throw error;
     }
 
     if (status !== "cancelled") {
-      throw new Error(
+      const error = new Error(
         "Invalid status selected. You can only cancelled the booking before starting date."
       );
+      error.statusCode = 400;
+      throw error;
     }
 
     const updatedBookingResult = await pool.query(
@@ -162,10 +188,18 @@ const updateBookingStatus = async (
     // Admin: Mark as "returned" (updates vehicle to "available")
 
     if (bookingResult.rows[0].status === "returned") {
-      throw new Error("The booking status was already updated to returned.");
+      const error = new Error(
+        "The booking status was already updated to returned."
+      );
+      error.statusCode = 400;
+      throw error;
     }
     if (status !== "returned") {
-      throw new Error("Admin can only update booking status to return.");
+      const error = new Error(
+        "Admin can only update booking status to returned."
+      );
+      error.statusCode = 400;
+      throw error;
     }
 
     const updatedBookingResult = await pool.query(
@@ -188,7 +222,11 @@ const updateBookingStatus = async (
       },
     };
   } else {
-    throw new Error("Invalid selection. check valid status and user's role");
+    const error = new Error(
+      "Invalid selection. check valid status and user's role"
+    );
+    error.statusCode = 400;
+    throw error;
   }
 };
 export const bookingServices = {

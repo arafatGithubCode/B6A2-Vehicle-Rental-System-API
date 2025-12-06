@@ -10,7 +10,9 @@ const auth = (roles: ("admin" | "customer")[]) => {
       const token = req.headers.authorization?.split(" ")[1];
 
       if (!token) {
-        throw new Error("token expired!");
+        const error = new Error("token expired!");
+        error.statusCode = 401;
+        throw error;
       }
 
       const decoded = jwt.verify(
@@ -21,12 +23,15 @@ const auth = (roles: ("admin" | "customer")[]) => {
       req.user = decoded;
 
       if (roles.length && !roles.includes(decoded.role.toLowerCase())) {
-        throw new Error("You have no access to do this.");
+        const error = new Error("Forbidden!!!");
+        error.statusCode = 403;
+        throw error;
       }
 
       next();
     } catch (error) {
-      sendJSON(500, false, res, errorHandler(error));
+      const { message, statusCode } = errorHandler(error);
+      sendJSON(statusCode, false, res, message);
     }
   };
 };

@@ -19,7 +19,8 @@ const signup = async (req: Request, res: Response) => {
       result.rows[0]
     );
   } catch (error) {
-    sendJSON(500, false, res, errorHandler(error));
+    const { message, statusCode } = errorHandler(error);
+    sendJSON(statusCode, false, res, message);
   }
 };
 
@@ -30,7 +31,8 @@ const signin = async (req: Request, res: Response) => {
 
     sendJSON(200, true, res, "Signin successful!", { token, user });
   } catch (error) {
-    sendJSON(500, false, res, errorHandler(error));
+    const { message, statusCode } = errorHandler(error);
+    sendJSON(statusCode, false, res, message);
   }
 };
 

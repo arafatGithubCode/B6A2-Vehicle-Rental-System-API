@@ -13,9 +13,11 @@ const signup = async (payload: Record<string, unknown>) => {
     role !== roleType.admin &&
     role !== roleType.customer
   ) {
-    throw new Error(
+    const error = new Error(
       "Invalid role selected. Allowed roles are admin or customer."
     );
+    error.statusCode = 400;
+    throw error;
   }
 
   const hashedPassword = await bcrypt.hash(password as string, 10);
@@ -34,7 +36,9 @@ const signin = async (email: string, password: string) => {
   ]);
 
   if (result.rows.length === 0) {
-    throw new Error("User does not exist.");
+    const error = new Error("User does not exist.");
+    error.statusCode = 404;
+    throw error;
   }
 
   const user = result.rows[0];
@@ -44,7 +48,9 @@ const signin = async (email: string, password: string) => {
   delete user.password;
 
   if (!isMatch) {
-    throw new Error("Bad Credentials!!!");
+    const error = new Error("Bad Credentials!!!");
+    error.statusCode = 401;
+    throw error;
   }
 
   const token = jwt.sign(user, config.jwt.secrete as string, {

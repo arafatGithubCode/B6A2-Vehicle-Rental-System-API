@@ -34,7 +34,8 @@ app.use((_req: Request, res: Response) => {
 
 // run time error
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  sendJSON(500, false, res, errorHandler(err));
+  const { message, statusCode } = errorHandler(err);
+  sendJSON(statusCode, false, res, message);
 });
 
 export default app;

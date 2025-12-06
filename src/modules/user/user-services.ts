@@ -30,7 +30,9 @@ const updateUserById = async (
 
   // prevent role update by customer
   if (isRoleUpdate && role === roleType.customer) {
-    throw new Error("You cannot update your role.");
+    const error = new Error("You cannot update your role.");
+    error.statusCode = 403;
+    throw error;
   }
 
   valuesToUpdate.push(userId);
@@ -49,7 +51,9 @@ const deleteUserById = async (userId: string) => {
   const result = await pool.query(`SELECT * FROM users WHERE id=$1`, [userId]);
 
   if (result.rows.length === 0) {
-    throw new Error("This user does not exists.");
+    const error = new Error("This user does not exists.");
+    error.statusCode = 404;
+    throw error;
   }
 
   const bookingResult = await pool.query(
@@ -62,12 +66,12 @@ const deleteUserById = async (userId: string) => {
       (booking) => booking.status === "active"
     );
 
-    console.log({ hasActiveBooking });
-
     if (hasActiveBooking) {
-      throw new Error(
-        "This user cannot be deleted because this user has an active booking"
+      const error = new Error(
+        "This user cannot be deleted because this user has an active booking."
       );
+      error.statusCode = 400;
+      throw error;
     }
   }
 
