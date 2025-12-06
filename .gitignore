@@ -17,3 +17,6 @@ dist
 
 #!.yarn/cache
 .pnp.*
+
+.vercel
+.env*.local

@@ -27,6 +27,11 @@ app.get("/api/v1/health", (_req, res) => {
   res.status(200).send("The health is ok.");
 });
 
+// root route
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).send("Welcome to 🚗 Vehicle Rental System");
+});
+
 // not route found error
 app.use((_req: Request, res: Response) => {
   sendJSON(404, false, res, "Route not found!");
