@@ -12,5 +12,6 @@ router.put(
   auth(["admin", "customer"]),
   userControllers.updateUserById
 );
-
+// DELETE:userId-> delete single suer by id -> admin only
+router.delete("/:userId", auth(["admin"]), userControllers.deleteUserById);
 export const userRoutes = router;
